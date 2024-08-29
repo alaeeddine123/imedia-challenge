@@ -1,34 +1,48 @@
 package de.imedia24.shop.db.entity
 
-import org.hibernate.annotations.UpdateTimestamp
+import de.imedia24.shop.domain.product.ProductResponse
 import java.math.BigDecimal
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
 
-@Entity
+ @Entity
 @Table(name = "products")
-data class ProductEntity(
+class ProductEntity(
     @Id
     @Column(name = "sku", nullable = false)
-    val sku: String,
+    var sku: String,
 
     @Column(name = "name", nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(name = "description")
-    val description: String? = null,
+    var description: String,
 
     @Column(name = "price", nullable = false)
-    val price: BigDecimal,
+    var price: BigDecimal,
 
-    @UpdateTimestamp
+    @Column(name = "stock", nullable = false)
+    var stock: Int = 0
+) {
     @Column(name = "created_at", nullable = false)
-    val createdAt: ZonedDateTime,
+    var createdAt: LocalDateTime = LocalDateTime.now()
 
-    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
-    val updatedAt: ZonedDateTime
-)
+    var updatedAt: LocalDateTime = LocalDateTime.now()
+
+    constructor() : this("", "", "", BigDecimal.ZERO, 0)
+}
+
+
+fun ProductEntity.toProductResponse(): ProductResponse {
+    return ProductResponse(
+        sku = this.sku,
+        name = this.name,
+        description = this.description,
+        price = this.price,
+        stock = this.stock
+    )
+}
